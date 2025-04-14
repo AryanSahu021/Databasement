@@ -11,9 +11,18 @@ def login():
 
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM login WHERE email = %s AND password = %s", (email, password))
+        # cursor.execute("SELECT * FROM Login WHERE email = %s AND password = %s", (email, password))
+        cursor.execute("""
+            SELECT members.ID AS id, members.emailID AS email 
+            FROM members 
+            INNER JOIN Login ON members.ID = Login.MemberID 
+            WHERE members.emailID = %s AND Login.Password = %s
+        """, (email, password))
+        
         user = cursor.fetchone()
+        cursor.fetchall()  # Ensure all results are consumed to avoid unread result error
         cursor.close()
+        print("+++++", user)
         conn.close()
 
         if user:
@@ -30,12 +39,13 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-
-        conn = get_connection()
+        role = 'User'
+        conn = get_connection(1)
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO members (name, email) VALUES (%s, %s)", (name, email))
+        cursor.execute("INSERT INTO members (UserName, emailID) VALUES (%s, %s)", (name, email))
+        print("inserted in members")
         member_id = cursor.lastrowid
-        cursor.execute("INSERT INTO login (id, email, password) VALUES (%s, %s, %s)", (member_id, email, password))
+        cursor.execute("INSERT INTO Login (MemberID, Password, Role) VALUES (%s, %s, %s)", (member_id, password, role))
         conn.commit()
         cursor.close()
         conn.close()

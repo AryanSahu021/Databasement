@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def get_connection(cims = True):
+def get_connection(cims = 1):
     return mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv('DB_USER'),
