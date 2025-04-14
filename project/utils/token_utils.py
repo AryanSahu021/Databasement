@@ -4,7 +4,6 @@ from flask import current_app
 def generate_file_token(document_id):
     """Generate a secure token for accessing a file."""
     serializer = URLSafeTimedSerializer(current_app.secret_key)
-    print("Generated token")
     return serializer.dumps({'document_id': document_id}, salt='file-access')
 
 def verify_file_token(token):

@@ -23,7 +23,6 @@ def login():
         user = cursor.fetchone()
         cursor.fetchall()  # Ensure all results are consumed to avoid unread result error
         cursor.close()
-        print("+++++", user)
         conn.close()
 
         if user:
@@ -100,61 +99,61 @@ def create_admin():
 
 
 
-from flask import Blueprint, request, render_template, redirect, url_for, session, flash
-from db import get_connection
-import os
+# from flask import Blueprint, request, render_template, redirect, url_for, session, flash
+# from db import get_connection
+# import os
 
-file_routes = Blueprint('files', __name__)
+# file_routes = Blueprint('files', __name__)
 
-@file_routes.route('/files', methods=['GET'])
-def list_files():
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
+# @file_routes.route('/files', methods=['GET'])
+# def list_files():
+#     if 'user_id' not in session:
+#         return redirect(url_for('auth.login'))
 
-    user_id = session['user_id']
-    conn = get_connection(0)
-    cursor = conn.cursor(dictionary=True)
+#     user_id = session['user_id']
+#     conn = get_connection(0)
+#     cursor = conn.cursor(dictionary=True)
 
-    # Fetch files the user has access to
-    cursor.execute("""
-        SELECT d.DocumentID, d.FilePath, a.AccessLevel
-        FROM pdfdocument d
-        JOIN accesscontrol a ON d.DocumentID = a.DocumentID
-        WHERE a.MemberID = %s
-    """, (user_id,))
-    files = cursor.fetchall()
+#     # Fetch files the user has access to
+#     cursor.execute("""
+#         SELECT d.DocumentID, d.FilePath, a.AccessLevel
+#         FROM pdfdocument d
+#         JOIN accesscontrol a ON d.DocumentID = a.DocumentID
+#         WHERE a.MemberID = %s
+#     """, (user_id,))
+#     files = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
-    return render_template('files.html', files=files)
+#     cursor.close()
+#     conn.close()
+#     return render_template('files.html', files=files)
 
-@file_routes.route('/files/<int:document_id>', methods=['GET'])
-def view_file(document_id):
-    if 'user_id' not in session:
-        return redirect(url_for('auth.login'))
+# @file_routes.route('/files/<int:document_id>', methods=['GET'])
+# def view_file(document_id):
+#     if 'user_id' not in session:
+#         return redirect(url_for('auth.login'))
 
-    user_id = session['user_id']
-    conn = get_connection(0)
-    cursor = conn.cursor(dictionary=True)
+#     user_id = session['user_id']
+#     conn = get_connection(0)
+#     cursor = conn.cursor(dictionary=True)
 
-    # Check if the user has access to the file
-    cursor.execute("""
-        SELECT d.FilePath, a.AccessLevel
-        FROM pdfdocument d
-        JOIN accesscontrol a ON d.DocumentID = a.DocumentID
-        WHERE a.MemberID = %s AND d.DocumentID = %s
-    """, (user_id, document_id))
-    access = cursor.fetchone()
+#     # Check if the user has access to the file
+#     cursor.execute("""
+#         SELECT d.FilePath, a.AccessLevel
+#         FROM pdfdocument d
+#         JOIN accesscontrol a ON d.DocumentID = a.DocumentID
+#         WHERE a.MemberID = %s AND d.DocumentID = %s
+#     """, (user_id, document_id))
+#     access = cursor.fetchone()
 
-    cursor.close()
-    conn.close()
+#     cursor.close()
+#     conn.close()
 
-    if not access:
-        flash('You do not have access to this file.')
-        return redirect(url_for('files.list_files'))
+#     if not access:
+#         flash('You do not have access to this file.')
+#         return redirect(url_for('files.list_files'))
 
-    # If access level is valid, serve the file
-    return redirect(access['FilePath'])
+#     # If access level is valid, serve the file
+#     return redirect(access['FilePath'])
 
 @auth_routes.route('/logout')
 def logout():

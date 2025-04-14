@@ -9,18 +9,18 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @upload_routes.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    # if 'user_id' not in session or session.get('role') != 'admin':
-    #     flash('Access denied. Only admins can upload files.')
-    #     return redirect(url_for('auth.login'))
-
     if request.method == 'POST':
         file = request.files['file']
         email_ids = request.form['email_ids'].split(',')
         access_level = request.form['access_level']
 
         if file:
+            # Save the file to the uploads folder
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             file.save(file_path)
+
+            # Normalize the file path to use forward slashes
+            normalized_file_path = file_path.replace("\\", "/")
 
             conn = get_connection(0)
             cursor = conn.cursor()
@@ -30,8 +30,9 @@ def upload_file():
             cursor.execute("""
                 INSERT INTO pdfdocument (OwnerID, FilePath)
                 VALUES (%s, %s)
-            """, (session['user_id'], file_path))
+            """, (session['user_id'], normalized_file_path))
             document_id = cursor.lastrowid
+
             # Assign access to specified email IDs
             for email in email_ids:
                 cursor.execute("SELECT MemberID FROM member WHERE Email = %s", (email.strip(),))

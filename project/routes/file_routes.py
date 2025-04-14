@@ -90,7 +90,6 @@ def list_files():
 @file_routes.route('/files/<token>', methods=['GET'])
 def view_file(token):
     # Verify the token and extract the document ID
-    print(token)
     document_id = verify_file_token(token)
     if not document_id:
         flash('Invalid or expired link.')

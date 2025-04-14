@@ -1,26 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Files - SafeDocs</title>
-</head>
-<body>
-    <body>
-        <h1>My Files</h1>
-        <a href="{{ url_for('upload.upload_file') }}">Upload File</a>
-        <br>
-        <ul>
-            {% for file in files %}
-            <li>
-                <a href="{{ url_for('files.view_file', token=generate_file_token(file.DocumentID)) }}" target="_blank">
-                    {{ file.FilePath }}
-                </a>
-                (Access: {{ file.AccessLevel }})
-            </li>
-            {% endfor %}
-        </ul>
-        <a href="/logout">Logout</a>
-    </body>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h1>My Files</h1>
+<a href="{{ url_for('upload.upload_file') }}" class="link">Upload File</a>
+<ul>
+    {% for file in files %}
+    <li>
+        <a href="{{ url_for('files.view_file', token=generate_file_token(file.DocumentID)) }}" target="_blank">
+            {{ file.FilePath }}
+        </a> (Access: {{ file.AccessLevel }})
+    </li>
+    {% endfor %}
+</ul>
+<a href="/logout" class="link">Logout</a>
+{% endblock %}
