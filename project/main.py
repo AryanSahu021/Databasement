@@ -1,10 +1,12 @@
 from flask import Flask
 from routes.member_routes import member_routes
 from routes.portfolio_routes import portfolio_routes
+from routes.file_routes import file_routes
 
 app = Flask(__name__)
 app.register_blueprint(member_routes)
 app.register_blueprint(portfolio_routes)
+app.register_blueprint(file_routes)
 
 @app.route('/')
 def home():
