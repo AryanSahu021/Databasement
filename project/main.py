@@ -1,16 +1,17 @@
-from flask import Flask
-from routes.member_routes import member_routes
-from routes.portfolio_routes import portfolio_routes
+from flask import Flask, render_template, redirect, url_for, session
+from routes.auth_routes import auth_routes
 from routes.file_routes import file_routes
 
 app = Flask(__name__)
-app.register_blueprint(member_routes)
-app.register_blueprint(portfolio_routes)
+app.secret_key = 'your_secret_key'  # Replace with a secure key
+app.register_blueprint(auth_routes)  # Ensure this is registered
 app.register_blueprint(file_routes)
 
 @app.route('/')
 def home():
-    return {"message": "Welcome to the File Access System"}
+    if 'user_id' in session:
+        return redirect(url_for('files.list_files'))
+    return redirect(url_for('auth.login'))
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')

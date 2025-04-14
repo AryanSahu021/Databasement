@@ -1,27 +1,24 @@
-from flask import Blueprint, request, jsonify
-from models.files import upload_file, get_user_files, update_file_access
+from flask import Blueprint, render_template, session, redirect, url_for
+from db import get_connection
 
 file_routes = Blueprint('files', __name__)
 
-@file_routes.route('/files/upload', methods=['POST'])
-def upload():
-    data = request.get_json()
-    file_id = upload_file(data['member_id'], data['file_name'], data['file_path'])
-    return jsonify({"message": "File uploaded", "file_id": file_id})
+@file_routes.route('/files', methods=['GET'])
+def list_files():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
 
-@file_routes.route('/files/<member_id>', methods=['GET'])
-def get_files(member_id):
-    files = get_user_files(member_id)
-    return jsonify(files)
+    user_id = session['user_id']
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT d.id, d.filename, d.file_path
+        FROM documents d
+        JOIN document_access a ON d.id = a.document_id
+        WHERE a.user_id = %s
+    """, (user_id,))
+    files = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
-@file_routes.route('/files/<file_id>/access', methods=['POST'])
-def share_file(file_id):
-    data = request.get_json()
-    update_file_access(
-        file_id,
-        data['target_member_id'],
-        data.get('can_view', False),
-        data.get('can_edit', False),
-        data.get('can_share', False)
-    )
-    return jsonify({"message": "Access updated"})
+    return render_template('files.html', files=files)

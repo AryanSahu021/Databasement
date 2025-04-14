@@ -1,9 +1,12 @@
 import mysql.connector
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_connection():
     return mysql.connector.connect(
-        host="10.0.116.125",
-        user="your_mysql_user",
-        password="your_mysql_password",
-        database="cs432gX"  # Replace with your group DB (e.g., cs432g14)
+        host=os.getenv("DB_HOST"),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASS'),
     )

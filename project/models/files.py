@@ -1,14 +1,21 @@
 from db import get_connection
 
-def upload_file(member_id, file_name, file_path):
+def upload_file(member_id, file_name, file_path, encryption_key):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO files (member_id, file_name, file_path) VALUES (%s, %s, %s)",
-                   (member_id, file_name, file_path))
+    query = """
+        INSERT INTO documents (filename, file_path, encryption_key, uploaded_by)
+        VALUES (%s, %s, %s, %s)
+    """
+    cursor.execute(query, (file_name, file_path, encryption_key, member_id))
     conn.commit()
     file_id = cursor.lastrowid
-    cursor.execute("INSERT INTO access_control (file_id, member_id, can_view, can_edit, can_share) VALUES (%s, %s, TRUE, TRUE, TRUE)",
-                   (file_id, member_id))
+    # Insert default access control record; owner gets full permissions.
+    access_query = """
+        INSERT INTO document_access (document_id, user_id, access_level, granted_by)
+        VALUES (%s, %s, 'owner', %s)
+    """
+    cursor.execute(access_query, (file_id, member_id, member_id))
     conn.commit()
     cursor.close()
     conn.close()
@@ -18,9 +25,9 @@ def get_user_files(member_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     query = """
-        SELECT f.* FROM files f
-        JOIN access_control a ON f.file_id = a.file_id
-        WHERE a.member_id = %s AND a.can_view = TRUE
+        SELECT d.* FROM documents d
+        JOIN document_access a ON d.id = a.document_id
+        WHERE a.user_id = %s AND a.access_level IN ('owner', 'edit', 'view')
     """
     cursor.execute(query, (member_id,))
     result = cursor.fetchall()
@@ -31,14 +38,19 @@ def get_user_files(member_id):
 def update_file_access(file_id, target_member_id, can_view, can_edit, can_share):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO access_control (file_id, member_id, can_view, can_edit, can_share)
-        VALUES (%s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE
-        can_view = VALUES(can_view),
-        can_edit = VALUES(can_edit),
-        can_share = VALUES(can_share)
-    """, (file_id, target_member_id, can_view, can_edit, can_share))
+    # Determine access level based on booleans.
+    if can_share or can_edit:
+        access_level = 'edit'
+    elif can_view:
+        access_level = 'view'
+    else:
+        access_level = 'view'
+    query = """
+        INSERT INTO document_access (document_id, user_id, access_level, granted_by)
+        VALUES (%s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE access_level = VALUES(access_level)
+    """
+    cursor.execute(query, (file_id, target_member_id, access_level, target_member_id))
     conn.commit()
     cursor.close()
     conn.close()
