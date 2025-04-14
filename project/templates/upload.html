@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+</head>
+<body>
+    <h1>Upload File</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="file">Select File:</label>
+        <input type="file" id="file" name="file" required>
+        <br>
+        <label for="email_ids">Grant Access (comma-separated emails):</label>
+        <input type="text" id="email_ids" name="email_ids" required>
+        <br>
+        <label for="access_level">Access Level:</label>
+        <select id="access_level" name="access_level" required>
+            <option value="Read">Read</option>
+            <option value="Download">Download</option>
+        </select>
+        <br>
+        <button type="submit">Upload</button>
+    </form>
+    <a href="/files">Back to Files</a>
+</body>
+</html>

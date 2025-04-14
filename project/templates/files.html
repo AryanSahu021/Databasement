@@ -8,14 +8,12 @@
 <body>
     <body>
         <h1>My Files</h1>
-        {% if session['role'] == 'admin' %}
-        <a href="{{ url_for('auth.create_admin') }}">Create New Admin</a>
+        <a href="{{ url_for('upload.upload_file') }}">Upload File</a>
         <br>
-        {% endif %}
         <ul>
             {% for file in files %}
             <li>
-                <a href="{{ url_for('files.view_file', document_id=file.DocumentID) }}" target="_blank">
+                <a href="{{ url_for('files.view_file', token=generate_file_token(file.DocumentID)) }}" target="_blank">
                     {{ file.FilePath }}
                 </a>
                 (Access: {{ file.AccessLevel }})

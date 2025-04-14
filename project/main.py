@@ -20,11 +20,14 @@
 from flask import Flask, render_template, redirect, url_for, session
 from routes.auth_routes import auth_routes
 from routes.file_routes import file_routes
+from routes.upload_routes import upload_routes
+
 from db import get_connection
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure key
 app.register_blueprint(auth_routes)
+app.register_blueprint(upload_routes)
 app.register_blueprint(file_routes)
 
 @app.before_request

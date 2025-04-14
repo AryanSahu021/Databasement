@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from db import get_connection
+from middleware.auth import is_valid_session
 
 auth_routes = Blueprint('auth', __name__)  # Ensure the blueprint name is 'auth'
 
@@ -50,12 +51,21 @@ def register():
         conn.commit()
         cursor.close()
         conn.close()
+        
+        conn = get_connection(0)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO member (MemberID, Name, Email, ContactNumber, PasswordHash, Role) VALUES (%s, %s, %s, %s, %s, %s)", (member_id, name, email, "0000000000", password, role))
+        print("inserted in members")
+        conn.commit()
+        cursor.close()
+        conn.close()
 
         flash('Registration successful. Please log in.')
         return redirect(url_for('auth.login'))
     return render_template('register.html')
 
 @auth_routes.route('/create_admin', methods=['GET', 'POST'])
+@is_valid_session
 def create_admin():
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Access denied. Only admins can create new admins.')
@@ -75,10 +85,76 @@ def create_admin():
         cursor.close()
         conn.close()
 
+        conn = get_connection(0)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO member (MemberID, Name, Email, ContactNumber, PasswordHash, Role) VALUES (%s, %s, %s, %s, %s, %s)", (member_id, name, email, "0000000000", password, "admin"))
+        print("inserted in members")
+        conn.commit()
+        cursor.close()
+        conn.close()
+
         flash('New admin created successfully.')
         return redirect(url_for('auth.create_admin'))
 
     return render_template('create_admin.html')
+
+
+
+from flask import Blueprint, request, render_template, redirect, url_for, session, flash
+from db import get_connection
+import os
+
+file_routes = Blueprint('files', __name__)
+
+@file_routes.route('/files', methods=['GET'])
+def list_files():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    user_id = session['user_id']
+    conn = get_connection(0)
+    cursor = conn.cursor(dictionary=True)
+
+    # Fetch files the user has access to
+    cursor.execute("""
+        SELECT d.DocumentID, d.FilePath, a.AccessLevel
+        FROM pdfdocument d
+        JOIN accesscontrol a ON d.DocumentID = a.DocumentID
+        WHERE a.MemberID = %s
+    """, (user_id,))
+    files = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return render_template('files.html', files=files)
+
+@file_routes.route('/files/<int:document_id>', methods=['GET'])
+def view_file(document_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    user_id = session['user_id']
+    conn = get_connection(0)
+    cursor = conn.cursor(dictionary=True)
+
+    # Check if the user has access to the file
+    cursor.execute("""
+        SELECT d.FilePath, a.AccessLevel
+        FROM pdfdocument d
+        JOIN accesscontrol a ON d.DocumentID = a.DocumentID
+        WHERE a.MemberID = %s AND d.DocumentID = %s
+    """, (user_id, document_id))
+    access = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not access:
+        flash('You do not have access to this file.')
+        return redirect(url_for('files.list_files'))
+
+    # If access level is valid, serve the file
+    return redirect(access['FilePath'])
 
 @auth_routes.route('/logout')
 def logout():

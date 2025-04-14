@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from db import get_connection
 
 def setup_logger():
     log_filename = f'logs/safedocs_{datetime.now().strftime("%Y%m%d")}.log'
