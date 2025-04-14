@@ -10,6 +10,24 @@ def setup_logger():
     )
     return logging.getLogger('safedocs')
 
-def log_action(user_id, action_type, action_details, document_id=None):
-    logger = setup_logger()
-    logger.info(f"User {user_id} - {action_type} - {action_details} - Document: {document_id}")
+def log_action(member_id, action_type, action_details, document_id=None):
+    conn = get_connection(0)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO auditlog (MemberID, DocumentID, ActionType)
+        VALUES (%s, %s, %s)
+    """, (member_id, document_id, action_type))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def log_failed_access(member_id, document_id, reason):
+    conn = get_connection(0)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO failedaccessattempts (MemberID, DocumentID, Reason)
+        VALUES (%s, %s, %s)
+    """, (member_id, document_id, reason))
+    conn.commit()
+    cursor.close()
+    conn.close()
