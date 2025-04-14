@@ -26,7 +26,6 @@ def upload_file():
             cursor = conn.cursor()
 
             # Insert file metadata into pdfdocument table
-            print("NOERRORSTILLHERE")
             cursor.execute("""
                 INSERT INTO pdfdocument (OwnerID, FilePath)
                 VALUES (%s, %s)

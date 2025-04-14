@@ -2,11 +2,16 @@
 {% block content %}
 <h1>Welcome to SafeDocs</h1>
 <p>A secure way to store, share, and manage your documents.</p>
+
 <nav>
     <ul>
-        <li><a href="/files" class="link">Manage Files</a></li>
-        <li><a href="/portfolio" class="link">View Portfolio</a></li>
-        <li><a href="/members" class="link">Manage Members</a></li>
+        <li><a href="{{ url_for('files.list_files') }}" class="link">Manage Files</a></li>
+        <li><a href="{{ url_for('portfolio.get_portfolio') }}" class="link">View Portfolio</a></li>
+        {% if session['role'] == 'admin' %}
+        <li><a href="{{ url_for('auth.create_admin') }}" class="link">Create New Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('upload.upload_file') }}" class="link">Upload File</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="link">Logout</a></li>
     </ul>
 </nav>
 {% endblock %}

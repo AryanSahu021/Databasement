@@ -1,8 +1,17 @@
 from functools import wraps
 from flask import request, jsonify
 import requests
-from functools import wraps
 from flask import session, redirect, url_for, flash
+
+def require_admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('role') != 'admin':
+            flash('Access denied. Admin privileges are required.')
+            return redirect(url_for('portfolio.get_portfolio'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 def require_auth(f):
     @wraps(f)

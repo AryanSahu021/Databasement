@@ -1,18 +1,24 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from db import get_connection
 from middleware.auth import is_valid_session
+import hashlib
 
 auth_routes = Blueprint('auth', __name__)  # Ensure the blueprint name is 'auth'
+
+def hash_password_md5(password):
+    # Encode the password to bytes, then create MD5 hash
+    md5_hash = hashlib.md5(password.encode())
+    return md5_hash.hexdigest()
 
 @auth_routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
-        password = request.form['password']
+        unhashed_password = request.form['password']
+        password = hash_password_md5(unhashed_password)
 
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        # cursor.execute("SELECT * FROM Login WHERE email = %s AND password = %s", (email, password))
         cursor.execute("""
             SELECT members.ID AS id, members.emailID AS email, Login.Role AS Role 
             FROM members 
@@ -29,7 +35,7 @@ def login():
             session['user_id'] = user['id']
             session['email'] = user['email']
             session['role'] = user['Role'] 
-            return redirect(url_for('files.list_files'))
+            return redirect(url_for('dashboard.dashboard'))
         else:
             flash('Invalid credentials. Please try again.')
     return render_template('login.html')
@@ -39,7 +45,8 @@ def register():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
-        password = request.form['password']
+        unhashed_password = request.form['password']
+        password = hash_password_md5(unhashed_password)
         role = 'User'
         conn = get_connection(1)
         cursor = conn.cursor()
@@ -73,7 +80,8 @@ def create_admin():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
-        password = request.form['password']
+        unhashed_password = request.form['password']
+        password = hash_password_md5(unhashed_password)
 
         conn = get_connection()
         cursor = conn.cursor()

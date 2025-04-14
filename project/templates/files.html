@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>My Files</h1>
+
+{% if session['role'] == 'admin' %}
+<a href="{{ url_for('auth.create_admin') }}" class="link">Create New Admin</a>
+<br>
+{% endif %}
+
 <a href="{{ url_for('upload.upload_file') }}" class="link">Upload File</a>
 <ul>
     {% for file in files %}

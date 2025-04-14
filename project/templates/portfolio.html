@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Project Portfolio</h1>
+
+<ul class="member-list">
+    {% for member in members %}
+    <li class="member-item">
+        <div class="member-info">
+            <span class="member-name">{{ member.UserName }}</span>
+            <span class="member-email">{{ member.Email }}</span>
+            <span class="member-role">Role: {{ member.Role }}</span>
+        </div>
+        {% if user_role == 'admin' %}
+        <button class="btn btn-edit" onclick="editMember('{{ member.MemberID }}', '{{ member.UserName }}', '{{ member.Email }}')">Edit</button>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+{% if user_role == 'admin' %}
+<div id="edit-form" style="display: none;">
+    <h2>Edit Member</h2>
+    <form id="edit-member-form" method="POST" action="{{ url_for('portfolio.edit_portfolio') }}">
+        <input type="hidden" id="member-id" name="member_id">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Save Changes</button>
+    </form>
+</div>
+{% endif %}
+
+<script>
+    function editMember(memberId, name, email) {
+        document.getElementById('edit-form').style.display = 'block';
+        document.getElementById('member-id').value = memberId;
+        document.getElementById('name').value = name;
+        document.getElementById('email').value = email;
+    }
+</script>
+{% endblock %}
