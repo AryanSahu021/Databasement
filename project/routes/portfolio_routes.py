@@ -21,29 +21,33 @@ def get_portfolio():
     """, (user_id,))
     group_mapping = cursor.fetchone()
 
-    if not group_mapping:
-        flash('You are not assigned to any project.')
-        return redirect(url_for('auth.logout'))
+    if group_mapping:
+        project_id = group_mapping['GroupID']
 
-    project_id = group_mapping['GroupID']
-
-    # Restrict access to members of the same project
-    if user_role == 'admin':
-        # Admins can view all members in the project
-        cursor.execute("""
-            SELECT m.ID AS MemberID, m.UserName, m.emailID AS Email
-            FROM members m
-            JOIN MemberGroupMapping mgm ON m.ID = mgm.MemberID
-            WHERE mgm.GroupID = %s
-        """, (project_id,))
+        # Restrict access to members of the same project
+        if user_role == 'admin':
+            # Admins can view all members in the project
+            cursor.execute("""
+                SELECT m.ID AS MemberID, m.UserName, m.emailID AS Email
+                FROM members m
+                JOIN MemberGroupMapping mgm ON m.ID = mgm.MemberID
+                WHERE mgm.GroupID = %s
+            """, (project_id,))
+        else:
+            # Regular members can only view their own profile
+            cursor.execute("""
+                SELECT m.ID AS MemberID, m.UserName, m.emailID AS Email
+                FROM members m
+                JOIN MemberGroupMapping mgm ON m.ID = mgm.MemberID
+                WHERE m.ID = %s AND mgm.GroupID = %s
+            """, (user_id, project_id))
     else:
-        # Regular members can only view their own profile
+        # If the user is not associated with any group, fetch only their own data
         cursor.execute("""
             SELECT m.ID AS MemberID, m.UserName, m.emailID AS Email
             FROM members m
-            JOIN MemberGroupMapping mgm ON m.ID = mgm.MemberID
-            WHERE m.ID = %s AND mgm.GroupID = %s
-        """, (user_id, project_id))
+            WHERE m.ID = %s
+        """, (user_id,))
 
     members = cursor.fetchall()
     cursor.close()

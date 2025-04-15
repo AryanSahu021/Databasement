@@ -54,17 +54,18 @@ def register():
         print("inserted in members")
         member_id = cursor.lastrowid
         cursor.execute("INSERT INTO Login (MemberID, Password, Role) VALUES (%s, %s, %s)", (member_id, password, role))
-        conn.commit()
-        cursor.close()
-        conn.close()
         
-        conn = get_connection(0)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO member (MemberID, Name, Email, ContactNumber, PasswordHash, Role) VALUES (%s, %s, %s, %s, %s, %s)", (member_id, name, email, "0000000000", password, role))
+        conn2 = get_connection(0)
+        cursor2 = conn2.cursor()
+        cursor2.execute("INSERT INTO member (MemberID, Name, Email, ContactNumber, PasswordHash, Role) VALUES (%s, %s, %s, %s, %s, %s)", (member_id, name, email, "0000000000", password, role))
         print("inserted in members")
+        
         conn.commit()
         cursor.close()
         conn.close()
+        conn2.commit()
+        cursor2.close()
+        conn2.close()
 
         flash('Registration successful. Please log in.')
         return redirect(url_for('auth.login'))
@@ -88,17 +89,17 @@ def create_admin():
         cursor.execute("INSERT INTO members (UserName, emailID) VALUES (%s, %s)", (name, email))
         member_id = cursor.lastrowid
         cursor.execute("INSERT INTO Login (MemberID, Password, Role) VALUES (%s, %s, %s)", (member_id, password, 'admin'))
-        conn.commit()
-        cursor.close()
-        conn.close()
 
-        conn = get_connection(0)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO member (MemberID, Name, Email, ContactNumber, PasswordHash, Role) VALUES (%s, %s, %s, %s, %s, %s)", (member_id, name, email, "0000000000", password, "admin"))
+        conn2 = get_connection(0)
+        cursor2 = conn2.cursor()
+        cursor2.execute("INSERT INTO member (MemberID, Name, Email, ContactNumber, PasswordHash, Role) VALUES (%s, %s, %s, %s, %s, %s)", (member_id, name, email, "0000000000", password, "admin"))
         print("inserted in members")
         conn.commit()
         cursor.close()
         conn.close()
+        conn2.commit()
+        cursor2.close()
+        conn2.close()
 
         flash('New admin created successfully.')
         return redirect(url_for('auth.create_admin'))
