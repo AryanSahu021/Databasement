@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Shared Requests</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>Sender</th>
+            <th>Document</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+        <tr>
+            <td>{{ request.RequestID }}</td>
+            <td>{{ request.SenderID }}</td>
+            <td>{{ request.DocumentID }}</td>
+            <td>{{ request.Status }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('share.update_shared_request_status', request_id=request.RequestID) }}">
+                    <input type="hidden" name="status" value="Accepted">
+                    <button type="submit">Accept</button>
+                </form>
+                <form method="POST" action="{{ url_for('share.update_shared_request_status', request_id=request.RequestID) }}">
+                    <input type="hidden" name="status" value="Rejected">
+                    <button type="submit">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
+{% endblock %}

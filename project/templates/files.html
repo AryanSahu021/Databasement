@@ -1,21 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>My Files</h1>
+<h1>Files in {{ folder_name }}</h1>
 
-{% if session['role'] == 'admin' %}
-<a href="{{ url_for('auth.create_admin') }}" class="link">Create New Admin</a>
-<br>
-{% endif %}
+<!-- File List -->
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for file in files %}
+        <tr>
+            <td>{{ file.FilePath.split('/')[-1] }}</td>
+            <td>
+                <a href="{{ url_for('files.view_file', token=generate_file_token(file.DocumentID)) }}" class="btn btn-primary">View</a>
+                {% if file.AccessLevel == 'Edit' %}
+                <button class="btn btn-secondary" onclick="openShareForm('{{ file.DocumentID }}')">Share</button>
+                <form method="POST" action="{{ url_for('files.delete_file', document_id=file.DocumentID, folder_id=folder_id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
+<!-- Share Form (Hidden by Default) -->
+<div id="share-form" class="form-container" style="display: none;">
+    <h2>Share File</h2>
+    <form id="share-file-form" method="POST" action="{{ url_for('share.send_shared_request') }}">
+        <div class="form-group">
+            <label for="receiver-id">Share with Member ID:</label>
+            <input type="number" id="receiver-id" name="receiver_id" required>
+        </div>
+        <input type="hidden" id="share-document-id" name="document_id">
+        <button type="submit" class="btn btn-success">Share</button>
+        <button type="button" class="btn btn-secondary" onclick="closeShareForm()">Cancel</button>
+    </form>
+</div>
 
-<a href="{{ url_for('upload.upload_file') }}" class="link">Upload File</a>
-<ul>
-    {% for file in files %}
-    <li>
-        <a href="{{ url_for('files.view_file', token=generate_file_token(file.DocumentID)) }}" target="_blank">
-            {{ file.FilePath }}
-        </a> (Access: {{ file.AccessLevel }})
-    </li>
-    {% endfor %}
-</ul>
-<a href="/logout" class="link">Logout</a>
+<script>
+    function openShareForm(documentId) {
+        document.getElementById('share-form').style.display = 'block';
+        document.getElementById('share-document-id').value = documentId;
+    }
+
+    function closeShareForm() {
+        document.getElementById('share-form').style.display = 'none';
+    }
+</script>
 {% endblock %}

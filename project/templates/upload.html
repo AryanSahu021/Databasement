@@ -4,14 +4,21 @@
 <form method="POST" enctype="multipart/form-data">
     <label for="file">Select File:</label>
     <input type="file" id="file" name="file" required>
-    <label for="email_ids">Grant Access (comma-separated emails):</label>
-    <input type="text" id="email_ids" name="email_ids" required>
+    <br>
+    <label for="folder_id">Select Folder:</label>
+    <select id="folder_id" name="folder_id" required>
+        {% for folder in folders %}
+        <option value="{{ folder.FolderID }}">{{ folder.FolderName }} ({{ folder.FolderType }})</option>
+        {% endfor %}
+    </select>
+    <br>
     <label for="access_level">Access Level:</label>
     <select id="access_level" name="access_level" required>
-        <option value="Read">Read</option>
-        <option value="Download">Download</option>
+        <option value="read">Read</option>
+        <option value="edit">Edit</option>
     </select>
+    <br>
     <button type="submit">Upload</button>
 </form>
-<a href="/files" class="link">Back to Files</a>
+<a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
 {% endblock %}

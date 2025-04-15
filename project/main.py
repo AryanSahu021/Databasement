@@ -24,6 +24,12 @@ from routes.upload_routes import upload_routes
 from routes.portfolio_routes import portfolio_routes
 from routes.dashboard_routes import dashboard_routes
 from routes.member_routes import member_routes
+from routes.folder_routes import folder_routes
+from routes.share_routes import share_routes
+
+
+
+
 from db import get_connection
 
 app = Flask(__name__)
@@ -34,6 +40,8 @@ app.register_blueprint(file_routes)
 app.register_blueprint(portfolio_routes)
 app.register_blueprint(dashboard_routes)
 app.register_blueprint(member_routes)
+app.register_blueprint(folder_routes)
+app.register_blueprint(share_routes)
 
 @app.before_request
 def create_hardcoded_admin():

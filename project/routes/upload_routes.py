@@ -11,10 +11,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
-        email_ids = request.form['email_ids'].split(',')
         access_level = request.form['access_level']
+        folder_id = request.form['folder_id']
 
-        if file:
+        if file and folder_id:
             # Save the file to the uploads folder
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             file.save(file_path)
@@ -32,22 +32,35 @@ def upload_file():
             """, (session['user_id'], normalized_file_path))
             document_id = cursor.lastrowid
 
-            # Assign access to specified email IDs
-            for email in email_ids:
-                cursor.execute("SELECT MemberID FROM member WHERE Email = %s", (email.strip(),))
-                user = cursor.fetchone()
-                if user:
-                    cursor.execute("""
-                        INSERT INTO accesscontrol (DocumentID, MemberID, AccessLevel)
-                        VALUES (%s, %s, %s)
-                    """, (document_id, user[0], access_level))
+            # Add the file to the selected folder
+            cursor.execute("""
+                INSERT INTO folderdocuments (FolderID, DocumentID)
+                VALUES (%s, %s)
+            """, (folder_id, document_id))
+
+            # Assign access to the uploader
+            cursor.execute("""
+                INSERT INTO accesscontrol (DocumentID, MemberID, AccessLevel)
+                VALUES (%s, %s, %s)
+            """, (document_id, session['user_id'], access_level))
 
             conn.commit()
-            cursor.fetchall()
             cursor.close()
             conn.close()
 
-            flash('File uploaded and access assigned successfully.')
-            return redirect(url_for('files.list_files'))
+            flash('File uploaded successfully.')
+            return redirect(url_for('dashboard.dashboard'))
 
-    return render_template('upload.html')
+    # Fetch folders for the dropdown
+    conn = get_connection(0)
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT FolderID, FolderName, FolderType
+        FROM folder
+        WHERE MemberID = %s
+    """, (session['user_id'],))
+    folders = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('upload.html', folders=folders)

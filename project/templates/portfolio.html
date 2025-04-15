@@ -1,47 +1,53 @@
+<!-- filepath: /home/aryan/projects/database/Databasement/project/templates/portfolio.html -->
 {% extends "base.html" %}
 {% block content %}
-<h1>Project Portfolio</h1>
+<div class="form-container">
+    <h1>Project Portfolio</h1>
+    <ul class="member-list">
+        {% for member in members %}
+        <li class="member-item">
+            <div class="member-info">
+                <span class="member-name">{{ member.UserName }}</span>
+                <span class="member-email">{{ member.Email }}</span>
+                <span class="member-role">Role: {{ member.Role }}</span>
+            </div>
+            {% if user_role == 'admin' %}
+            <button class="btn btn-primary" onclick="editMember('{{ member.MemberID }}', '{{ member.UserName }}', '{{ member.Email }}')">Edit</button>
+            <button class="btn btn-danger" onclick="confirmDelete('{{ member.MemberID }}', '{{ member.UserName }}')">Delete</button>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
 
-<ul class="member-list">
-    {% for member in members %}
-    <li class="member-item">
-        <div class="member-info">
-            <span class="member-name">{{ member.UserName }}</span>
-            <span class="member-email">{{ member.Email }}</span>
-            <span class="member-role">Role: {{ member.Role }}</span>
-        </div>
-        {% if user_role == 'admin' %}
-        <button class="btn btn-edit" onclick="editMember('{{ member.MemberID }}', '{{ member.UserName }}', '{{ member.Email }}')">Edit</button>
-        <button class="btn btn-delete" onclick="confirmDelete('{{ member.MemberID }}', '{{ member.UserName }}')">Delete</button>
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+    {% if user_role == 'admin' %}
+    <div id="edit-form" class="form-container" style="display: none;">
+        <h2>Edit Member</h2>
+        <form id="edit-member-form" method="POST" action="{{ url_for('portfolio.edit_portfolio') }}">
+            <input type="hidden" id="member-id" name="member_id">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
 
-{% if user_role == 'admin' %}
-<div id="edit-form" style="display: none;">
-    <h2>Edit Member</h2>
-    <form id="edit-member-form" method="POST" action="{{ url_for('portfolio.edit_portfolio') }}">
-        <input type="hidden" id="member-id" name="member_id">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <button type="submit">Save Changes</button>
-    </form>
+    <div id="delete-confirmation" class="form-container" style="display: none;">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete <span id="delete-member-name"></span>?</p>
+        <form id="delete-member-form" method="POST">
+            <input type="hidden" id="delete-member-id" name="member_id">
+            <button type="submit" class="btn btn-danger">Confirm</button>
+            <button type="button" class="btn btn-secondary" onclick="cancelDelete()">Cancel</button>
+        </form>
+    </div>
+    {% endif %}
 </div>
-
-<div id="delete-confirmation" style="display: none;">
-    <h2>Confirm Delete</h2>
-    <p>Are you sure you want to delete <span id="delete-member-name"></span>?</p>
-    <form id="delete-member-form" method="POST">
-        <input type="hidden" id="delete-member-id" name="member_id">
-        <button type="submit" class="btn btn-danger">Confirm</button>
-        <button type="button" class="btn btn-secondary" onclick="cancelDelete()">Cancel</button>
-    </form>
-</div>
-{% endif %}
-
+<a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
 <script>
     function editMember(memberId, name, email) {
         document.getElementById('edit-form').style.display = 'block';
@@ -54,10 +60,6 @@
         document.getElementById('delete-confirmation').style.display = 'block';
         document.getElementById('delete-member-id').value = memberId;
         document.getElementById('delete-member-name').innerText = name;
-
-        // Dynamically set the form action URL
-        const deleteForm = document.getElementById('delete-member-form');
-        deleteForm.action = `/members/${memberId}`;
     }
 
     function cancelDelete() {
