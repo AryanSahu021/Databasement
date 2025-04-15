@@ -1,0 +1,9 @@
+2025-04-15 15:53:10,044 - INFO - Authentication attempt: MemberID=2198, IPAddress=127.0.0.1, Status=Success
+2025-04-15 15:53:10,050 - INFO - 127.0.0.1 - - [15/Apr/2025 15:53:10] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-04-15 15:53:10,464 - INFO - 127.0.0.1 - - [15/Apr/2025 15:53:10] "GET /dashboard HTTP/1.1" 200 -
+2025-04-15 15:53:10,938 - INFO - 127.0.0.1 - - [15/Apr/2025 15:53:10] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-15 15:54:20,138 - INFO - Authentication attempt: MemberID=2198, IPAddress=127.0.0.1, Status=Success
+2025-04-15 15:54:20,147 - INFO - 127.0.0.1 - - [15/Apr/2025 15:54:20] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-04-15 15:54:20,773 - INFO - 127.0.0.1 - - [15/Apr/2025 15:54:20] "GET /dashboard HTTP/1.1" 200 -
+2025-04-15 15:54:21,169 - INFO - 127.0.0.1 - - [15/Apr/2025 15:54:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-15 16:03:00,078 - INFO -  * Detected change in 'C:\\Users\\Rakesh\\OneDrive\\Desktop\\Sem6\\Databasement\\project\\routes\\auth_routes.py', reloading

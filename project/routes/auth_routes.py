@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from db import get_connection
+
 from middleware.auth import is_valid_session
 import hashlib
+from utils.logger import log_action, log_failed_access, log_authentication
 
 auth_routes = Blueprint('auth', __name__)  # Ensure the blueprint name is 'auth'
 
@@ -30,13 +32,16 @@ def login():
         cursor.fetchall()  # Ensure all results are consumed to avoid unread result error
         cursor.close()
         conn.close()
-
+        ip_address = request.remote_addr
         if user:
             session['user_id'] = user['id']
             session['email'] = user['email']
             session['role'] = user['Role'] 
+            log_authentication(member_id=user['id'], ip_address=ip_address, status='Success')
             return redirect(url_for('dashboard.dashboard'))
         else:
+            log_authentication(member_id=None, ip_address=ip_address, status='Failed')
+            log_failed_access(member_id=None, document_id=None, reason='Invalid login credentials')
             flash('Invalid credentials. Please try again.')
     return render_template('login.html')
 
@@ -66,7 +71,7 @@ def register():
         conn2.commit()
         cursor2.close()
         conn2.close()
-
+        log_action(member_id=member_id, action_type='Register', action_details='User registered successfully')
         flash('Registration successful. Please log in.')
         return redirect(url_for('auth.login'))
     return render_template('register.html')
@@ -101,6 +106,7 @@ def create_admin():
         cursor2.close()
         conn2.close()
 
+        log_action(member_id=session['user_id'], action_type='CreateAdmin', action_details=f'Admin created: {name} ({email})')
         flash('New admin created successfully.')
         return redirect(url_for('auth.create_admin'))
 
@@ -166,6 +172,11 @@ def create_admin():
 
 @auth_routes.route('/logout')
 def logout():
+    log_action(
+            member_id=session['user_id'],
+            action_type='Logout',
+            action_details='User logged out successfully'
+        )
     session.clear()
     return redirect(url_for('auth.login'))
 

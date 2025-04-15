@@ -111,9 +111,16 @@ def view_file(token):
     conn.close()
 
     if not access:
+        log_failed_access(member_id=user_id, document_id=document_id, reason='Unauthorized access')
         flash('You do not have access to this document.')
         log_action(user_id, 'Unauthorized Attempt', 'Tried to access a restricted document', document_id)
         return redirect(url_for('files.list_files'))
+    log_action(
+        member_id=user_id,
+        action_type='ViewFile',
+        action_details=f'User viewed file with DocumentID={document_id}',
+        document_id=document_id
+    )
 
     # Log the access attempt
     log_action(user_id, 'View', 'Viewed document', document_id)
