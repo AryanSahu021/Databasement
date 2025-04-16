@@ -1,0 +1,34 @@
+2025-04-16 01:48:18,220 - INFO - Authentication attempt: MemberID=2197, IPAddress=127.0.0.1, Status=Success
+2025-04-16 01:48:18,222 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:18] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-04-16 01:48:18,324 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:18] "GET /dashboard HTTP/1.1" 200 -
+2025-04-16 01:48:18,418 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:18] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:20,422 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:20] "GET /portfolio HTTP/1.1" 200 -
+2025-04-16 01:48:20,505 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:20] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:25,050 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:25] "GET /dashboard HTTP/1.1" 200 -
+2025-04-16 01:48:25,134 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:27,141 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:27] "GET /shared_requests HTTP/1.1" 200 -
+2025-04-16 01:48:27,223 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:28,716 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:28] "GET /dashboard HTTP/1.1" 200 -
+2025-04-16 01:48:28,800 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:33,450 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:33] "GET /folders HTTP/1.1" 200 -
+2025-04-16 01:48:33,538 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:37,057 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:37] "GET /folders/15/files HTTP/1.1" 200 -
+2025-04-16 01:48:37,137 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:38,490 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:38] "GET /dashboard HTTP/1.1" 200 -
+2025-04-16 01:48:38,568 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:40,226 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:40] "GET /folders HTTP/1.1" 200 -
+2025-04-16 01:48:40,307 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:42,238 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:42] "GET /folders/13/files HTTP/1.1" 200 -
+2025-04-16 01:48:42,322 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:46,392 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:46] "GET /folders/6/files HTTP/1.1" 200 -
+2025-04-16 01:48:46,467 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:46] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:48:48,336 - ERROR - Failed to log action: 1265 (01000): Data truncated for column 'ActionType' at row 1
+2025-04-16 01:48:48,423 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:48] "GET /files/eyJkb2N1bWVudF9pZCI6MzB9.Z_8Mfg.hMZg3cTA9FLbvI2ymilUkhOqOdQ HTTP/1.1" 200 -
+2025-04-16 01:48:56,985 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:56] "GET /dashboard HTTP/1.1" 200 -
+2025-04-16 01:48:57,067 - INFO - 127.0.0.1 - - [16/Apr/2025 01:48:57] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:49:14,759 - ERROR - Failed to log action: 1048 (23000): Column 'DocumentID' cannot be null
+2025-04-16 01:49:14,760 - INFO - 127.0.0.1 - - [16/Apr/2025 01:49:14] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-16 01:49:14,819 - INFO - 127.0.0.1 - - [16/Apr/2025 01:49:14] "GET /login HTTP/1.1" 200 -
+2025-04-16 01:49:14,900 - INFO - 127.0.0.1 - - [16/Apr/2025 01:49:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-16 01:49:21,529 - INFO - 127.0.0.1 - - [16/Apr/2025 01:49:21] "GET /register HTTP/1.1" 200 -
+2025-04-16 01:49:21,611 - INFO - 127.0.0.1 - - [16/Apr/2025 01:49:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -

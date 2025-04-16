@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from utils.logger import log_action
 from db import get_connection
 from middleware.auth import is_valid_session
 
@@ -111,6 +112,12 @@ def edit_portfolio():
     conn.commit()
     cursor.close()
     conn.close()
+    
+    conn2.commit()
+    cursor2.close()
+    conn2.close()
+    # Log the update action
+    log_action(session['user_id'], 'update', f"Member details updated for member {member_id}")
 
     flash('Member details updated successfully.')
     return redirect(url_for('portfolio.get_portfolio'))
